@@ -10,12 +10,22 @@ from app.config import settings
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
+# bcrypt only supports passwords up to 72 bytes
+BCRYPT_MAX_BYTES = 72
+
+
+def _truncate_password(password: str) -> str:
+    """Ensure password does not exceed bcrypt's 72-byte limit."""
+    return password.encode("utf-8")[:BCRYPT_MAX_BYTES].decode("utf-8", errors="ignore")
+
 
 def hash_password(password: str) -> str:
+    password = _truncate_password(password)
     return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
+    plain_password = _truncate_password(plain_password)
     return pwd_context.verify(plain_password, hashed_password)
 
 

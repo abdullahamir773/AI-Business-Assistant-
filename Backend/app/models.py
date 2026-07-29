@@ -26,6 +26,11 @@ class User(Base):
     email = Column(String, unique=True, index=True, nullable=False)
     full_name = Column(String, nullable=True)
     hashed_password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
+    reset_token = Column(String, nullable=True)
+    reset_token_expires = Column(DateTime, nullable=True)
+    reset_token_expires = Column(DateTime, nullable=True)
+    widget_key = Column(String, unique=True, nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     documents = relationship("Document", back_populates="owner", cascade="all, delete-orphan")
@@ -39,6 +44,7 @@ class Document(Base):
     filename = Column(String, nullable=False)
     file_path = Column(String, nullable=False)
     status = Column(String, default="processing")  # processing | ready | failed
+    summary = Column(Text, nullable=True)
     uploaded_at = Column(DateTime, default=datetime.utcnow)
 
     owner_id = Column(UUID(as_uuid=False), ForeignKey("users.id"), nullable=False)

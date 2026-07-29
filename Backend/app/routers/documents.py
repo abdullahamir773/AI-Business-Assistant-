@@ -10,8 +10,9 @@ from sqlalchemy.orm import Session
 from app.database import get_db
 from app import models, schemas
 from app.deps import get_current_user
-from app.rag.pdf_utils import extract_text_from_pdf, chunk_text
+from app.rag.pdf_utils import extract_pages_from_pdf, chunk_pages
 from app.rag.vector_store import add_document_chunks, delete_document_chunks
+from app.rag.llm import generate_summary
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
@@ -45,8 +46,8 @@ def upload_document(
     db.refresh(document)
 
     try:
-        text = extract_text_from_pdf(file_path)
-        chunks = chunk_text(text)
+        pages = extract_pages_from_pdf(file_path)
+        chunks = chunk_pages(pages)
 
         if not chunks:
             document.status = "failed"
@@ -62,6 +63,13 @@ def upload_document(
             filename=file.filename,
             chunks=chunks,
         )
+
+        full_text = "\n".join(pages)
+        try:
+            document.summary = generate_summary(full_text, file.filename)
+        except Exception:
+            document.summary = None
+
         document.status = "ready"
         db.commit()
         db.refresh(document)

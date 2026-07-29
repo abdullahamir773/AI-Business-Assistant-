@@ -32,16 +32,24 @@ class Token(BaseModel):
     token_type: str = "bearer"
     user: UserOut
 
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
 # ---------- Documents ----------
 
 class DocumentOut(BaseModel):
     id: str
     filename: str
     status: str
+    summary: str | None = None
     uploaded_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
-
 
 # ---------- Chat ----------
 
@@ -61,3 +69,10 @@ class ChatMessageOut(BaseModel):
 class ChatResponse(BaseModel):
     answer: str
     sources: list[str] = []
+
+class WidgetInfo(BaseModel):
+    widget_key: str
+
+
+class PublicChatRequest(BaseModel):
+    message: str

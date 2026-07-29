@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import EmbedModal from "./EmbedModal";
 
 export default function Sidebar({
   user,
@@ -11,6 +12,8 @@ export default function Sidebar({
   const fileInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
+  const [expandedId, setExpandedId] = useState(null);
+  const [showEmbed, setShowEmbed] = useState(false);
 
   async function handleFiles(files) {
     const file = files?.[0];
@@ -87,28 +90,54 @@ export default function Sidebar({
         )}
 
         {documents.map((doc, i) => (
-          <div className="doc-item" key={doc.id} style={{ animationDelay: `${i * 40}ms` }}>
-            <div className="doc-item-icon">📄</div>
-            <div className="doc-item-info">
-              <div className="doc-item-name" title={doc.filename}>
-                {doc.filename}
-              </div>
-              <div className={`doc-item-status status-${doc.status}`}>
-                {doc.status === "ready" && "Ready"}
-                {doc.status === "processing" && "Processing…"}
-                {doc.status === "failed" && "Failed"}
-              </div>
-            </div>
-            <button
-              className="doc-item-delete"
-              title="Delete document"
-              onClick={() => onDelete(doc.id)}
+          <div key={doc.id} style={{ animationDelay: `${i * 40}ms` }} className="doc-item-wrap">
+            <div
+              className="doc-item"
+              onClick={() => doc.summary && setExpandedId(expandedId === doc.id ? null : doc.id)}
+              style={{ cursor: doc.summary ? "pointer" : "default" }}
             >
-              ×
-            </button>
+              <div className="doc-item-icon">📄</div>
+              <div className="doc-item-info">
+                <div className="doc-item-name" title={doc.filename}>
+                  {doc.filename}
+                </div>
+                <div className={`doc-item-status status-${doc.status}`}>
+                  {doc.status === "ready" && "Ready"}
+                  {doc.status === "processing" && "Processing…"}
+                  {doc.status === "failed" && "Failed"}
+                </div>
+              </div>
+              <button
+                className="doc-item-delete"
+                title="Delete document"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(doc.id);
+                }}
+              >
+                ×
+              </button>
+            </div>
+            {expandedId === doc.id && doc.summary && (
+              <div className="doc-item-summary">{doc.summary}</div>
+            )}
           </div>
         ))}
       </div>
+      <button className="sidebar-embed-btn" onClick={() => setShowEmbed(true)}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+          <path
+            d="M16 18l6-6-6-6M8 6l-6 6 6 6"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+        Embed on your website
+      </button>
+
+      {showEmbed && <EmbedModal onClose={() => setShowEmbed(false)} />}
 
       <div className="sidebar-user">
         <div className="sidebar-user-avatar">

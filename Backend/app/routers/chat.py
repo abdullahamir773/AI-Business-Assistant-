@@ -40,7 +40,7 @@ def ask_question(
     db.add(assistant_msg)
     db.commit()
 
-    sources = list({c["filename"] for c in relevant_chunks})
+    sources = sorted({f"{c['filename']} (p.{c['page']})" for c in relevant_chunks})
     return schemas.ChatResponse(answer=answer, sources=sources)
 
 

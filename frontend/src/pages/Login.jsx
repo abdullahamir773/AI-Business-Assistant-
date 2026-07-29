@@ -50,8 +50,13 @@ export default function Login() {
                 autoComplete="email"
               />
             </div>
-            <div className="field">
-              <label htmlFor="password">Password</label>
+           <div className="field">
+              <div className="field-label-row">
+                <label htmlFor="password">Password</label>
+                <Link to="/forgot-password" className="forgot-link">
+                  Forgot password?
+                </Link>
+              </div>
               <input
                 id="password"
                 type="password"
