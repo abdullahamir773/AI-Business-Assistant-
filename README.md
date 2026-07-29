@@ -115,7 +115,7 @@ App available at `http://localhost:5173`.
 
 ## Screenshots
 
-> _Add screenshots here: login screen, chat with a document, source citations._
+<img width="958" height="410" alt="image" src="https://github.com/user-attachments/assets/72a0d3d2-0d70-4bc4-bf3e-1ad9bf0b2675" />
 
 ## What I'd improve next
 
