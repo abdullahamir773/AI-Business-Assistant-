@@ -1,9 +1,4 @@
-"""
-FastAPI app entrypoint.
-
-Run with:
-    uvicorn app.main:app --reload
-"""
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -28,9 +23,17 @@ app.include_router(documents.router)
 app.include_router(chat.router)
 app.include_router(widget.router)
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+BASE_DIR = Path(__file__).resolve().parent.parent
 
+app.mount(
+    "/static",
+    StaticFiles(directory=str(BASE_DIR / "static")),
+    name="static"
+)
 
 @app.get("/")
 def root():
-    return {"status": "ok", "message": "AI Business Assistant API is running"}
+    return {
+        "status": "ok",
+        "message": "AI Business Assistant API is running"
+    }
